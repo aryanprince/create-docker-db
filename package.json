@@ -1,12 +1,17 @@
 {
-  "name": "quick-db",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "name": "dev-db",
+  "version": "0.0.1",
+  "description": "Easily create DBs for local development using Docker Compose",
+  "keywords": [ "database", "docker", "development" ],
+  "author": "Aryan Prince <hello@aryanprince.com> (https://aryanprince.com)",
+  "homepage": "https://github.com/aryanprince/dev-db",
+  "bugs": {
+    "url": "https://github.com/aryanprince/dev-db/issues" 
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC"
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aryanprince/dev-db.git"
+  },
+  "type": "module",
+  "license": "MIT"
 }
