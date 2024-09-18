@@ -1,5 +1,5 @@
 {
-  "name": "dev-db",
+  "name": "create-docker-db",
   "version": "0.0.1",
   "description": "A CLI to easily create DBs for local development using Docker Compose",
   "keywords": [
@@ -8,23 +8,23 @@
     "development"
   ],
   "author": "Aryan Prince <hello@aryanprince.com> (https://aryanprince.com)",
-  "homepage": "https://github.com/aryanprince/dev-db",
+  "homepage": "https://github.com/aryanprince/create-docker-db",
   "bugs": {
-    "url": "https://github.com/aryanprince/dev-db/issues"
+    "url": "https://github.com/aryanprince/create-docker-db/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/aryanprince/dev-db.git"
+    "url": "git+https://github.com/aryanprince/create-docker-db.git"
   },
   "type": "module",
   "license": "MIT",
   "main": "./dist/index.js",
   "bin": {
-    "dev-db": "./dist/index.js"
+    "create-docker-db": "./dist/index.js"
   },
   "scripts": {
     "build": "tsc",
-    "dev": "pnpm build && pnpm link --global && dev-db",
+    "dev": "pnpm build && pnpm link --global && create-docker-db",
     "ci": "pnpm run format:check && pnpm run check-exports && pnpm run build",
     "format": "prettier --write .",
     "format:check": "prettier --check .",

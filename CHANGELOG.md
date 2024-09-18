@@ -1,7 +1,7 @@
-# dev-db
+# create-docker-db
 
-## 0.0.2
+## 0.0.1
 
 ### Patch Changes
 
-- 7b3b7d4: Creates a Docker Compose file with selected DB for local development
+- 15a9afa: Initial release with support for scaffolding a local Docker database setup for MySQL or Postgres.
