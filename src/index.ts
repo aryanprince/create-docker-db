@@ -1,32 +1,37 @@
-import { Command } from 'commander';
-import fs from 'fs';
-import inquirer from 'inquirer';
-import path from 'path';
+import { Command } from "commander";
+import fs from "fs";
+import inquirer from "inquirer";
+import path from "path";
 
 const program = new Command();
 
 program
-  .name('dev-db')
-  .description('A CLI to easily create DBs for local development using Docker Compose')
-  .version('0.0.1')
+  .name("dev-db")
+  .description(
+    "A CLI to easily create DBs for local development using Docker Compose",
+  )
+  .version("0.0.1")
   .action(async () => {
     const answers = await inquirer.prompt([
       {
-        type: 'list',
-        name: 'dbType',
-        message: 'Which database would you like to use?',
-        choices: ['PostgreSQL', 'MySQL'],
+        type: "list",
+        name: "dbType",
+        message: "Which database would you like to use?",
+        choices: ["PostgreSQL", "MySQL"],
       },
     ]);
 
     const dockerComposeContent = generateDockerCompose(answers.dbType);
-    
-    fs.writeFileSync(path.join(process.cwd(), 'docker-compose.yml'), dockerComposeContent);
-    console.log('Docker Compose file created successfully!');
+
+    fs.writeFileSync(
+      path.join(process.cwd(), "docker-compose.yml"),
+      dockerComposeContent,
+    );
+    console.log("Docker Compose file created successfully!");
   });
 
 function generateDockerCompose(dbType: string): string {
-  if (dbType === 'MySQL') {
+  if (dbType === "MySQL") {
     return `
 version: "3.9"
 
