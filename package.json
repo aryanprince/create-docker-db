@@ -1,7 +1,7 @@
 {
   "name": "dev-db",
   "version": "0.0.1",
-  "description": "Easily create DBs for local development using Docker Compose",
+  "description": "A CLI to easily create DBs for local development using Docker Compose",
   "keywords": [
     "database",
     "docker",
@@ -18,9 +18,13 @@
   },
   "type": "module",
   "license": "MIT",
-  "main": "dist/index.js",
+  "main": "./dist/index.js",
+  "bin": {
+    "dev-db": "./dist/index.js"
+  },
   "scripts": {
     "build": "tsc",
+    "dev": "pnpm build && pnpm link --global && dev-db",
     "ci": "pnpm run format:check && pnpm run check-exports && pnpm run build",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
@@ -28,7 +32,12 @@
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.16.4",
+    "@types/inquirer": "^9.0.7",
     "prettier": "^3.3.3",
     "typescript": "^5.6.2"
+  },
+  "dependencies": {
+    "commander": "^12.1.0",
+    "inquirer": "^11.0.2"
   }
 }
