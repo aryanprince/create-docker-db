@@ -7,7 +7,7 @@ A CLI to easily create DBs for local development using Docker Compose. Currently
 ## 🚀 Usage
 
 ```bash
-npx create-docker-db # or bunx create docker-db
+npx create-docker-db # or bunx create-docker-db
 ```
 
 ## 🎯 Roadmap
@@ -24,5 +24,5 @@ npx create-docker-db # or bunx create docker-db
 
 - [ ] Add support for MongoDB
 - [ ] Add support for Redis
-- [ ] Add support for SQLite (easy but still)
+- [ ] Add support for SQLite (with LibSQL HTTP for Turso)
 - [ ] Add support for HTTP based DB services (like PlanetScale, Turso, etc.)
