@@ -25,7 +25,7 @@
   "scripts": {
     "build": "tsc",
     "dev": "bun src/index.ts",
-    "ci": "pnpm run format:check && pnpm run check-exports && pnpm run build",
+    "ci": "pnpm run format:check && pnpm run build && pnpm run check-exports",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "check-exports": "attw --pack . --ignore-rules=cjs-resolves-to-esm",
