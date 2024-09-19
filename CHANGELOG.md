@@ -1,5 +1,11 @@
 # create-docker-db
 
+## 0.2.1
+
+### Patch Changes
+
+- f68bcdd: Remove CLI screenshot asset from package
+
 ## 0.2.0
 
 ### Minor Changes
