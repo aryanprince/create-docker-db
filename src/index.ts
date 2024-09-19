@@ -64,7 +64,7 @@ program
       dockerComposeContent,
     );
 
-    console.log("Docker Compose file created successfully!");
+    console.log("🐳 Docker Compose file created successfully!");
 
     // Generate database connection URL
     const connectionUrl = getConnectionUrl(
@@ -72,8 +72,7 @@ program
       answers.selectedProjectName,
     );
 
-    const connectionUrl = getConnectionUrl(answers.dbType, answers.projectName);
-    console.log("\nConnection URL for your database:");
+    console.log("\n📋 Copy this connection URL to start using your database:");
     console.log(connectionUrl);
   });
 
