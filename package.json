@@ -1,6 +1,6 @@
 {
   "name": "create-docker-db",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "A CLI to easily create DBs for local development using Docker Compose",
   "keywords": [
     "database",
@@ -29,7 +29,8 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "check-exports": "attw --pack . --ignore-rules=cjs-resolves-to-esm",
-    "local-release": "changeset version && changeset publish",
+    "changesets:generate": "changeset",
+    "changesets:release": "changeset version && changeset publish",
     "prepublishOnly": "npm run ci"
   },
   "devDependencies": {

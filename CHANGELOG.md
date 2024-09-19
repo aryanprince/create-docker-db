@@ -1,5 +1,18 @@
 # create-docker-db
 
+## 0.2.0
+
+### Minor Changes
+
+- Improve CLI by adding post-run instructions.
+
+  ### Features
+
+  ✨ Implement more informative CLI log messages and include steps to follow for better user experience
+  ♻️ Upgrade to latest version of `inquirer` for improved performance
+  💄 Enhance CLI output with emojis for better user experience
+  📝 Reorganize README for better project overview
+
 ## 0.1.0
 
 ### Minor Changes
