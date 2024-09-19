@@ -1,6 +1,6 @@
+import { input, select, Separator } from "@inquirer/prompts";
 import { Command } from "commander";
 import fs from "fs";
-import inquirer from "inquirer";
 import path from "path";
 
 const program = new Command();
@@ -12,34 +12,65 @@ program
   )
   .version("0.0.2")
   .action(async () => {
+    // Get the current directory name to use as the default project name
     const currentDir = path.basename(process.cwd());
 
-    const answers = await inquirer.prompt([
-      {
-        type: "list",
-        name: "dbType",
+    // Prompts user to select database and project name
+    const answers = {
+      selectedDatabase: await select({
         message: "Which database would you like to use?",
-        choices: ["PostgreSQL", "MySQL"],
-      },
-      {
-        type: "input",
-        name: "projectName",
+        choices: [
+          {
+            value: "postgres",
+            name: "PostgreSQL",
+            description:
+              "PostgreSQL is a powerful, open-source object-relational database system",
+          },
+          {
+            value: "mysql",
+            name: "MySQL",
+            description:
+              "MySQL is an open-source relational database management system",
+          },
+          // Separator to visually separate the coming soon databases from the available ones
+          new Separator(),
+          {
+            value: "redis",
+            name: "Redis",
+            disabled: "(Coming soon!)",
+          },
+          {
+            value: "mongodb",
+            name: "MongoDB",
+            disabled: "(Coming soon!)",
+          },
+        ],
+      }),
+      selectedProjectName: await input({
         message: "Enter your project name:",
         default: currentDir,
-      },
-    ]);
+      }),
+    };
 
+    // Generate Docker Compose file content
     const dockerComposeContent = generateDockerCompose(
-      answers.dbType,
-      answers.projectName,
+      answers.selectedDatabase,
+      answers.selectedProjectName,
     );
 
+    // Create docker-compose.yml file with the generated content
     fs.writeFileSync(
       path.join(process.cwd(), "docker-compose.yml"),
       dockerComposeContent,
     );
 
     console.log("Docker Compose file created successfully!");
+
+    // Generate database connection URL
+    const connectionUrl = getConnectionUrl(
+      answers.selectedDatabase,
+      answers.selectedProjectName,
+    );
 
     const connectionUrl = getConnectionUrl(answers.dbType, answers.projectName);
     console.log("\nConnection URL for your database:");
