@@ -64,7 +64,9 @@ program
       dockerComposeContent,
     );
 
-    console.log("🐳 Docker Compose file created successfully!");
+    console.log(
+      "✅ Docker Compose file created successfully! (`docker-compose.yml`)",
+    );
 
     // Generate database connection URL
     const connectionUrl = getConnectionUrl(
@@ -72,48 +74,26 @@ program
       answers.selectedProjectName,
     );
 
-    console.log("\n📋 Copy this connection URL to start using your database:");
+    console.log("\nNext steps:");
+    console.log("\n1. 🐳 Run your database with Docker Compose:");
+    console.log("docker-compose up -d");
+
+    console.log(
+      "\n2. 📋 Copy this connection URL to start using your database:",
+    );
     console.log(connectionUrl);
   });
 
-function generateDockerCompose(dbType: string, projectName: string): string {
-  if (dbType === "MySQL") {
-    return `
+function generateDockerCompose(
+  selectedDatabase: string,
+  selectedProjectName: string,
+): string {
+  switch (selectedDatabase) {
+    case "postgres":
+      return `
   version: "3.9"
   
-  name: ${projectName}-mysql
-  
-  services:
-    # This is your local MySQL database instance
-    mysql-db:
-      image: mysql
-      restart: always
-      environment:
-        MYSQL_DATABASE: ${projectName}
-        MYSQL_ROOT_PASSWORD: root
-        MYSQL_USER: dev
-        MYSQL_PASSWORD: dev
-      volumes:
-        - ${projectName}-data:/var/lib/mysql
-      ports:
-        - "6969:3306" # Access the DB at port 6969
-  
-    # Use Adminer to quickly view the database at localhost:8089
-    adminer:
-      image: adminer
-      restart: always
-      ports:
-        - "8089:8080"
-  
-  volumes:
-    ${projectName}-data:
-      driver: local
-  `;
-  } else {
-    return `
-  version: "3.9"
-  
-  name: ${projectName}-postgres
+  name: ${selectedProjectName}-postgres
   
   services:
     # This is your local Postgres database instance
@@ -121,11 +101,11 @@ function generateDockerCompose(dbType: string, projectName: string): string {
       image: postgres
       restart: always
       environment:
-        POSTGRES_DB: ${projectName}
+        POSTGRES_DB: ${selectedProjectName}
         POSTGRES_USER: dev
         POSTGRES_PASSWORD: dev
       volumes:
-        - ${projectName}-data:/var/lib/postgresql/data
+        - ${selectedProjectName}-data:/var/lib/postgresql/data
       ports:
         - "6969:5432" # Access the DB at port 6969
   
@@ -137,17 +117,57 @@ function generateDockerCompose(dbType: string, projectName: string): string {
         - "8069:8080"
   
   volumes:
-    ${projectName}-data:
+    ${selectedProjectName}-data:
       driver: local
   `;
+    case "mysql":
+      return `
+    version: "3.9"
+    
+    name: ${selectedProjectName}-mysql
+    
+    services:
+      # This is your local MySQL database instance
+      mysql-db:
+        image: mysql
+        restart: always
+        environment:
+          MYSQL_DATABASE: ${selectedProjectName}
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_USER: dev
+          MYSQL_PASSWORD: dev
+        volumes:
+          - ${selectedProjectName}-data:/var/lib/mysql
+        ports:
+          - "6969:3306" # Access the DB at port 6969
+    
+      # Use Adminer to quickly view the database at localhost:8089
+      adminer:
+        image: adminer
+        restart: always
+        ports:
+          - "8089:8080"
+    
+    volumes:
+      ${selectedProjectName}-data:
+        driver: local
+    `;
+    default:
+      throw new Error("Database not supported");
   }
 }
 
-function getConnectionUrl(dbType: string, projectName: string): string {
-  if (dbType === "MySQL") {
-    return `mysql://dev:dev@localhost:6969/${projectName}`;
-  } else {
-    return `postgresql://dev:dev@localhost:6969/${projectName}`;
+function getConnectionUrl(
+  selectedDatabase: string,
+  selectedProjectName: string,
+): string {
+  switch (selectedDatabase) {
+    case "postgres":
+      return `postgresql://dev:dev@localhost:6969/${selectedProjectName}`;
+    case "mysql":
+      return `mysql://dev:dev@localhost:6969/${selectedProjectName}`;
+    default:
+      throw new Error("Database not supported");
   }
 }
 
