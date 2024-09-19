@@ -2,7 +2,7 @@
 
 A CLI to easily create DBs for local development using Docker Compose. Currently supports Postgres and MySQL.
 
-![Screenshot showcasing the `create-docker-db` CLI tool](assets/image.png)
+![Screenshot showcasing the `create-docker-db` CLI tool](https://github.com/user-attachments/assets/30df32e3-d314-4594-94e9-33cda10702c4)
 
 ## 🚀 Usage
 
