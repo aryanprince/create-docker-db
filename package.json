@@ -16,23 +16,23 @@
     "type": "git",
     "url": "git+https://github.com/aryanprince/create-docker-db.git"
   },
-  "type": "module",
   "license": "MIT",
-  "main": "./dist/index.js",
+  "type": "commonjs",
   "bin": {
     "create-docker-db": "./dist/index.js"
   },
   "scripts": {
-    "build": "tsc",
+    "build": "tsup",
     "dev": "bun src/index.ts",
     "clean": "rm -rf node_modules && rm -rf pnpm-lock.yaml && rm -rf dist",
     "clean:dist": "rm -rf dist",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
+    "lint": "tsc",
     "lint:attw": "attw --pack . --ignore-rules=cjs-resolves-to-esm",
     "changesets:generate": "changeset",
     "changesets:release": "changeset version && changeset publish",
-    "ci": "pnpm run format:check && pnpm run build && pnpm run check-exports",
+    "ci": "pnpm run format:check && pnpm run build && pnpm run lint:attw",
     "release": "pnpm run ci && pnpm run changesets:release",
     "prepublishOnly": "npm run ci"
   },
@@ -40,6 +40,7 @@
     "@arethetypeswrong/cli": "^0.16.4",
     "@changesets/cli": "^2.27.8",
     "prettier": "^3.3.3",
+    "tsup": "^8.3.0",
     "typescript": "^5.6.2"
   },
   "dependencies": {
