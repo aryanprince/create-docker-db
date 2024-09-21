@@ -1,5 +1,14 @@
 # create-docker-db
 
+## 0.3.0
+
+### Minor Changes
+
+- 8b31b3b: ✨ New UI
+  ✨ Switch to `clack` from `inquirer` for CLI prompts
+  ♻️ Refactor code
+  🎨 Add more database provider options
+
 ## 0.2.2
 
 ### Patch Changes
