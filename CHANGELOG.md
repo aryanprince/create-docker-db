@@ -1,5 +1,14 @@
 # create-docker-db
 
+## 0.3.1
+
+### Patch Changes
+
+- 9be78a5: ✨ Add Redis and switch to using templates
+  ✨ Add `redis` as a new database provider option
+  ♻️ Add templates for generating Docker Compose files
+  📝 Minor change in README
+
 ## 0.3.0
 
 ### Minor Changes
