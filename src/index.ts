@@ -18,6 +18,7 @@ program
     // Get the current directory name to use as the default project name
     const currentDir = path.basename(process.cwd());
 
+    console.log("\n");
     p.intro(`create-docker-db`);
 
     // Prompts user to select database and project name

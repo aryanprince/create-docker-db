@@ -1,0 +1,29 @@
+version: "3.9"
+
+name: ${selectedProjectName}-mysql
+
+services:
+  # This is your local MySQL database instance
+  mysql-db:
+    image: mysql
+    restart: always
+    environment:
+    MYSQL_DATABASE: ${selectedProjectName}
+    MYSQL_ROOT_PASSWORD: root
+    MYSQL_USER: dev
+    MYSQL_PASSWORD: dev
+    volumes:
+      - ${selectedProjectName}-data:/var/lib/mysql
+    ports:
+      - "6969:3306" # Access the DB at port 6969
+
+  # Use Adminer to quickly view the database at localhost:8089
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - "8089:8080"
+
+volumes:
+  ${selectedProjectName}-data:
+    driver: local
