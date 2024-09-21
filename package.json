@@ -31,6 +31,7 @@
     "check-exports": "attw --pack . --ignore-rules=cjs-resolves-to-esm",
     "changesets:generate": "changeset",
     "changesets:release": "changeset version && changeset publish",
+    "release": "pnpm run ci && pnpm run changesets:release",
     "prepublishOnly": "npm run ci"
   },
   "devDependencies": {
