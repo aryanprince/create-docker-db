@@ -31,24 +31,8 @@ program
               { value: "postgres", label: "PostgreSQL" },
               { value: "mysql", label: "MySQL" },
               {
-                value: "sqlite",
-                label: "SQLite",
-                hint: "Not supported yet, coming soon!",
-              },
-              {
-                value: "libsql",
-                label: "LibSQL (Turso)",
-                hint: "Not supported yet, coming soon!",
-              },
-              {
-                value: "mongodb",
-                label: "MongoDB",
-                hint: "Not supported yet, coming soon!",
-              },
-              {
                 value: "redis",
                 label: "Redis",
-                hint: "Not supported yet, coming soon!",
               },
             ],
             initialValue: "postgres",

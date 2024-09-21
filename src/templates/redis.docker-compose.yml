@@ -1,0 +1,26 @@
+version: "3.9"
+
+name: ${selectedProjectName}-redis
+
+services:
+  # This is your local Redis database instance
+  redis-db:
+    image: redis
+    restart: always
+    volumes:
+      - ${selectedProjectName}-data:/data
+    ports:
+      - "6969:6379" # Access the Redis DB at port 6969
+
+  # Use RedisInsight to view and manage Redis at localhost:8069
+  redisinsight:
+    image: redis/redisinsight:latest
+    restart: always
+    ports:
+      - "8069:8001"
+    environment:
+      - REDIS_URL=redis://redis-db:6379
+
+volumes:
+  ${selectedProjectName}-data:
+    driver: local
