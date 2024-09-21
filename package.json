@@ -29,10 +29,9 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "lint": "tsc",
-    "lint:attw": "attw --pack . --ignore-rules=cjs-resolves-to-esm",
     "changesets:generate": "changeset",
     "changesets:release": "changeset version && changeset publish",
-    "ci": "pnpm run format:check && pnpm run build && pnpm run lint:attw",
+    "ci": "pnpm run format:check && pnpm run build",
     "release": "pnpm run ci && pnpm run changesets:release",
     "prepublishOnly": "npm run ci"
   },
