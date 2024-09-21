@@ -25,12 +25,14 @@
   "scripts": {
     "build": "tsc",
     "dev": "bun src/index.ts",
-    "ci": "pnpm run format:check && pnpm run build && pnpm run check-exports",
+    "clean": "rm -rf node_modules && rm -rf pnpm-lock.yaml && rm -rf dist",
+    "clean:dist": "rm -rf dist",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "check-exports": "attw --pack . --ignore-rules=cjs-resolves-to-esm",
+    "lint:attw": "attw --pack . --ignore-rules=cjs-resolves-to-esm",
     "changesets:generate": "changeset",
     "changesets:release": "changeset version && changeset publish",
+    "ci": "pnpm run format:check && pnpm run build && pnpm run check-exports",
     "release": "pnpm run ci && pnpm run changesets:release",
     "prepublishOnly": "npm run ci"
   },
