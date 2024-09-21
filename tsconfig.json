@@ -18,6 +18,11 @@
     /* Others: */
     "lib": ["es2022"],
     "noEmit": true,
-    "verbatimModuleSyntax": true
+    "verbatimModuleSyntax": true,
+
+    /* Path Aliases: */
+    "paths": {
+      "~/*": ["./src/*"]
+    }
   }
 }
