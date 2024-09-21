@@ -1,5 +1,14 @@
 # create-docker-db
 
+## 0.2.2
+
+### Patch Changes
+
+- d765188: ✨ Migrate to `tsup` from `tsc`
+  👷 Add auto-publish CI workflow
+  ➖ Remove `attw`
+  🔨 Add clean script, reorganize scripts
+
 ## 0.2.1
 
 ### Patch Changes
