@@ -1,7 +1,8 @@
 {
   "$schema": "https://unpkg.com/release-it@17/schema/release-it.json",
   "git": {
-    "commitMessage": "🔖 Release package v${version}"
+    "commitMessage": "🔖 Release package v${version}",
+    "tagName": "v${version}"
   },
   "github": {
     "release": true
@@ -10,6 +11,7 @@
     "publish": true
   },
   "plugins": {
+    "release-it-pnpm": {},
     "@release-it/conventional-changelog": {
       "preset": {
         "name": "conventionalcommits",
