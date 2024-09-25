@@ -1,3 +1,14 @@
+
+
+* 👷 Fix indentation in workflow file (2abb2cb)
+* 👷 Fix typo in workflow file (122ebab)
+* 👷 Initialize NPM config before creating release (9186af2)
+* 🙈 Create `.npmignore` (ff65db0)
+* ➕ Install `release-it-pnpm` (45ec962)
+* 🙈 Create `.prettierignore` (0e1068a)
+* 🎨 Fix Prettier formatting errors (d47a44f)
+* ✨ Setup and configure `release-it` (3b2309d)
+
 # create-docker-db
 
 ## 0.3.1
