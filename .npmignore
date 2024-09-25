@@ -1,0 +1,18 @@
+# Folders
+node_modules
+src
+
+# Files
+.prettierrc
+CHANGELOG.md
+LICENSE
+README.md
+package.json
+tsconfig.json
+tsup.config.ts
+
+docker-compose.yml
+.npmrc
+.changeset
+.github
+.DS_Store
