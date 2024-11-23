@@ -1,6 +1,6 @@
 {
   "name": "create-docker-db",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "A CLI to easily create DBs for local development using Docker Compose",
   "keywords": [
     "database",

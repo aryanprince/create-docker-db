@@ -1,5 +1,7 @@
 
 
+* 🙈 Add `.prettierignore` and `.release-it.json` to `.npmignore` (1e1263e)
+
 * 👷 Fix indentation in workflow file (2abb2cb)
 * 👷 Fix typo in workflow file (122ebab)
 * 👷 Initialize NPM config before creating release (9186af2)
