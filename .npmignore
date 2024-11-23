@@ -1,9 +1,10 @@
 # Folders
 node_modules
-src
 
 # Files
 .prettierrc
+.prettierignore
+.release-it.json
 CHANGELOG.md
 LICENSE
 README.md
