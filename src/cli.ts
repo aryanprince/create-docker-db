@@ -115,10 +115,12 @@ async function customizeDockerConfig(
     `Persist ${provider.label} data in a named volume?`,
     config.persistence,
   );
-  const adminUi = await confirmPrompt(
-    `Include the ${provider.label} admin UI?`,
-    config.adminUi,
-  );
+  const adminUi = provider.supportsAdminUi
+    ? await confirmPrompt(
+        `Include the ${provider.label} admin UI?`,
+        config.adminUi,
+      )
+    : false;
   let adminPort = config.adminPort;
 
   if (adminUi) {

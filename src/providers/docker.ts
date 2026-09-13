@@ -1,6 +1,6 @@
 import type { ComposeFragment } from "../utils/compose-file";
 
-export type DockerProviderId = "postgres" | "mysql" | "redis";
+export type DockerProviderId = "postgres" | "mysql" | "redis" | "mongodb";
 
 export interface DockerProviderDefinition {
   id: DockerProviderId;
@@ -10,6 +10,7 @@ export interface DockerProviderDefinition {
   defaultHostPort: number;
   defaultAdminPort: number;
   supportsCredentials: boolean;
+  supportsAdminUi: boolean;
 }
 
 export interface DockerProviderConfig {
@@ -43,6 +44,7 @@ export const dockerProviders: Record<
     defaultHostPort: 5432,
     defaultAdminPort: 8069,
     supportsCredentials: true,
+    supportsAdminUi: true,
   },
   mysql: {
     id: "mysql",
@@ -52,6 +54,7 @@ export const dockerProviders: Record<
     defaultHostPort: 3306,
     defaultAdminPort: 8070,
     supportsCredentials: true,
+    supportsAdminUi: true,
   },
   redis: {
     id: "redis",
@@ -61,6 +64,17 @@ export const dockerProviders: Record<
     defaultHostPort: 6379,
     defaultAdminPort: 8071,
     supportsCredentials: false,
+    supportsAdminUi: true,
+  },
+  mongodb: {
+    id: "mongodb",
+    label: "MongoDB",
+    defaultImage: "mongo:8.0",
+    containerPort: 27017,
+    defaultHostPort: 27017,
+    defaultAdminPort: 8072,
+    supportsCredentials: true,
+    supportsAdminUi: false,
   },
 };
 
@@ -79,7 +93,7 @@ export function createDefaultDockerConfig(
     username: "dev",
     password: "dev",
     persistence: true,
-    adminUi: true,
+    adminUi: provider.supportsAdminUi,
     adminPort: provider.defaultAdminPort,
   };
 }
@@ -114,7 +128,9 @@ function addAdminer(
   services: Record<string, unknown>,
   config: DockerProviderConfig,
 ): { label: string; url: string } | undefined {
-  if (!config.adminUi || config.id === "redis") return undefined;
+  if (!config.adminUi || config.id === "redis" || config.id === "mongodb") {
+    return undefined;
+  }
 
   const serviceName = `${config.id}-adminer`;
   services[serviceName] = {
@@ -244,6 +260,35 @@ export function generateDockerSetup(
           url: `http://127.0.0.1:${config.adminPort}`,
         });
       }
+    }
+
+    if (config.id === "mongodb") {
+      services[config.serviceName] = {
+        ...common,
+        environment: {
+          MONGO_INITDB_DATABASE: environmentDefault(
+            "MONGO_INITDB_DATABASE",
+            config.databaseName,
+          ),
+          MONGO_INITDB_ROOT_USERNAME: environmentDefault(
+            "MONGO_INITDB_ROOT_USERNAME",
+            config.username,
+          ),
+          MONGO_INITDB_ROOT_PASSWORD: environmentDefault(
+            "MONGO_INITDB_ROOT_PASSWORD",
+            config.password,
+          ),
+        },
+        volumes: persistenceVolume(volumeName, "/data/db", config.persistence),
+        healthcheck: healthcheck([
+          "CMD-SHELL",
+          `mongosh --quiet --host localhost --username "$$MONGO_INITDB_ROOT_USERNAME" --password "$$MONGO_INITDB_ROOT_PASSWORD" --authenticationDatabase admin --eval "quit(db.adminCommand('ping').ok ? 0 : 2)"`,
+        ]),
+      };
+      connectionUrls.push({
+        label: provider.label,
+        url: `mongodb://${encode(config.username)}:${encode(config.password)}@127.0.0.1:${config.hostPort}/${encode(config.databaseName)}?authSource=admin`,
+      });
     }
 
     if (config.persistence) volumes[volumeName] = null;

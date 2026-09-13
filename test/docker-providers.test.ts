@@ -49,3 +49,19 @@ test("omits volumes and admin UI when persistence and UI are disabled", () => {
   assert.doesNotMatch(content, /^volumes:/m);
   assert.doesNotMatch(content, /adminer/);
 });
+
+test("generates an authenticated MongoDB service without deprecated admin UI", () => {
+  const config = createDefaultDockerConfig("mongodb", "demo");
+  const setup = generateDockerSetup("demo", [config]);
+  const content = mergeComposeDocument(undefined, setup.fragment).content;
+
+  assert.match(content, /image: mongo:8\.0/);
+  assert.match(content, /MONGO_INITDB_ROOT_USERNAME/);
+  assert.match(content, /mongosh/);
+  assert.match(content, /\/data\/db/);
+  assert.doesNotMatch(content, /mongo-express/);
+  assert.equal(
+    setup.connectionUrls[0]?.url,
+    "mongodb://dev:dev@127.0.0.1:27017/demo?authSource=admin",
+  );
+});
