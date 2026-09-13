@@ -31,7 +31,7 @@
     "lint": "tsc",
     "changesets:generate": "changeset",
     "changesets:release": "changeset version && changeset publish",
-    "ci": "pnpm run format:check && pnpm run build",
+    "ci": "pnpm run format:check && pnpm run lint && pnpm run build",
     "release": "pnpm run ci && pnpm release-it --ci",
     "prepublishOnly": "npm run ci"
   },
