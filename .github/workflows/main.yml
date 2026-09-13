@@ -31,3 +31,6 @@ jobs:
 
       - name: Format, lint, build and check exports
         run: pnpm run ci
+
+      - name: Test generated database containers
+        run: pnpm run test:integration

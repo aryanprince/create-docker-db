@@ -31,6 +31,7 @@
     "lint": "tsc",
     "test:build": "tsc -p tsconfig.test.json",
     "test": "pnpm run test:build && node --test .test-dist/test/*.test.js",
+    "test:integration": "RUN_DOCKER_TESTS=1 pnpm run test",
     "ci": "pnpm run format:check && pnpm run lint && pnpm run test && pnpm run build",
     "release": "pnpm run ci && pnpm release-it",
     "prepublishOnly": "npm run ci"
