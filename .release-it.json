@@ -9,6 +9,7 @@
     "autoGenerate": true
   },
   "npm": {
-    "publish": true
+    "publish": true,
+    "skipChecks": true
   }
 }
