@@ -29,7 +29,9 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "lint": "tsc",
-    "ci": "pnpm run format:check && pnpm run lint && pnpm run build",
+    "test:build": "tsc -p tsconfig.test.json",
+    "test": "pnpm run test:build && node --test .test-dist/test/*.test.js",
+    "ci": "pnpm run format:check && pnpm run lint && pnpm run test && pnpm run build",
     "release": "pnpm run ci && pnpm release-it",
     "prepublishOnly": "npm run ci"
   },
@@ -44,6 +46,7 @@
   "dependencies": {
     "@clack/prompts": "^0.7.0",
     "@inquirer/prompts": "^6.0.1",
-    "commander": "^12.1.0"
+    "commander": "^12.1.0",
+    "yaml": "^2.8.1"
   }
 }

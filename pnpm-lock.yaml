@@ -17,6 +17,9 @@ importers:
       commander:
         specifier: ^12.1.0
         version: 12.1.0
+      yaml:
+        specifier: ^2.8.1
+        version: 2.9.1
     devDependencies:
       '@arethetypeswrong/cli':
         specifier: ^0.16.4
@@ -32,7 +35,7 @@ importers:
         version: 17.6.0(typescript@5.6.2)
       tsup:
         specifier: ^8.3.0
-        version: 8.3.0(jiti@1.21.6)(typescript@5.6.2)(yaml@2.5.1)
+        version: 8.3.0(jiti@1.21.6)(typescript@5.6.2)(yaml@2.9.1)
       typescript:
         specifier: ^5.6.2
         version: 5.6.2
@@ -1927,9 +1930,9 @@ packages:
     resolution: {integrity: sha512-0pfFzegeDWJHJIAmTLRP2DwHjdF5s7jo9tuztdQxAhINCdvS+3nGINqPd00AphqJR/0LhANUS6/+7SCb98YOfA==}
     engines: {node: '>=10'}
 
-  yaml@2.5.1:
-    resolution: {integrity: sha512-bLQOjaX/ADgQ20isPJRvF0iRUHIxVhYvr53Of7wGcWlO2jvtUlH5m87DsmulFVxRpNLOnI4tB6p/oh8D7kpn9Q==}
-    engines: {node: '>= 14'}
+  yaml@2.9.1:
+    resolution: {integrity: sha512-3NxN8+78OdzbT7C/WjGsyfPAtJaN3FNDsWxv7Y7mcDsT/oOmgW8BpyQQFFBnvZE3j9Y2Sdz1ULFLezL7Eb2yFw==}
+    engines: {node: '>= 14.6'}
     hasBin: true
 
   yargs-parser@20.2.9:
@@ -3331,12 +3334,12 @@ snapshots:
 
   pirates@4.0.6: {}
 
-  postcss-load-config@6.0.1(jiti@1.21.6)(yaml@2.5.1):
+  postcss-load-config@6.0.1(jiti@1.21.6)(yaml@2.9.1):
     dependencies:
       lilconfig: 3.1.2
     optionalDependencies:
       jiti: 1.21.6
-      yaml: 2.5.1
+      yaml: 2.9.1
 
   prettier@3.3.3: {}
 
@@ -3650,7 +3653,7 @@ snapshots:
 
   tslib@2.7.0: {}
 
-  tsup@8.3.0(jiti@1.21.6)(typescript@5.6.2)(yaml@2.5.1):
+  tsup@8.3.0(jiti@1.21.6)(typescript@5.6.2)(yaml@2.9.1):
     dependencies:
       bundle-require: 5.0.0(esbuild@0.23.1)
       cac: 6.7.14
@@ -3661,7 +3664,7 @@ snapshots:
       execa: 5.1.1
       joycon: 3.1.1
       picocolors: 1.1.0
-      postcss-load-config: 6.0.1(jiti@1.21.6)(yaml@2.5.1)
+      postcss-load-config: 6.0.1(jiti@1.21.6)(yaml@2.9.1)
       resolve-from: 5.0.0
       rollup: 4.22.4
       source-map: 0.8.0-beta.0
@@ -3784,8 +3787,7 @@ snapshots:
 
   y18n@5.0.8: {}
 
-  yaml@2.5.1:
-    optional: true
+  yaml@2.9.1: {}
 
   yargs-parser@20.2.9: {}
 

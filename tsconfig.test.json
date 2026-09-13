@@ -1,0 +1,12 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "module": "CommonJS",
+    "noEmit": false,
+    "outDir": ".test-dist",
+    "rootDir": ".",
+    "verbatimModuleSyntax": false
+  },
+  "include": ["src/**/*.ts", "test/**/*.ts"],
+  "exclude": ["src/index.ts"]
+}
