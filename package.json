@@ -29,15 +29,12 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "lint": "tsc",
-    "changesets:generate": "changeset",
-    "changesets:release": "changeset version && changeset publish",
     "ci": "pnpm run format:check && pnpm run lint && pnpm run build",
     "release": "pnpm run ci && pnpm release-it",
     "prepublishOnly": "npm run ci"
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.16.4",
-    "@changesets/cli": "^2.27.8",
     "@release-it/conventional-changelog": "^8.0.2",
     "@types/node": "^22.5.5",
     "prettier": "^3.3.3",
