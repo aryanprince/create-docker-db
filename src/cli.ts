@@ -12,6 +12,12 @@ import {
   type DockerProviderId,
 } from "./providers/docker";
 import {
+  addGitignoreEntry,
+  createLocalDatabase,
+  resolveLocalDatabasePath,
+  type LocalProviderId,
+} from "./providers/local";
+import {
   ComposeConflictError,
   findComposeFile,
   mergeComposeDocument,
@@ -20,6 +26,8 @@ import {
 
 const projectNamePattern = /^[a-z0-9][a-z0-9_-]*$/;
 const serviceNamePattern = /^[a-zA-Z0-9][a-zA-Z0-9_.-]*$/;
+
+type SetupType = "docker" | LocalProviderId;
 
 function normalizeProjectName(value: string): string {
   const normalized = value
@@ -245,6 +253,63 @@ async function setupDockerDatabases(projectName: string): Promise<void> {
   p.outro(`Docker databases are ready.\n\n${details.join("\n")}`);
 }
 
+async function setupLocalDatabase(provider: LocalProviderId): Promise<void> {
+  const label = provider === "sqlite" ? "SQLite" : "local libSQL";
+  const fileName = await textPrompt({
+    message: `${label} database file`,
+    defaultValue: "local.db",
+    validate: (value) => {
+      try {
+        resolveLocalDatabasePath(process.cwd(), value ?? "");
+      } catch (error) {
+        return error instanceof Error
+          ? error.message
+          : "Invalid database path.";
+      }
+    },
+  });
+  const filePath = resolveLocalDatabasePath(process.cwd(), fileName);
+
+  p.note(
+    [
+      `File: ${path.relative(process.cwd(), filePath)}`,
+      provider === "sqlite"
+        ? "Connection: file-based SQLite"
+        : "Server: Turso CLI on http://127.0.0.1:8080",
+    ].join("\n"),
+    `${label} setup`,
+  );
+
+  const approved = await confirmPrompt(
+    fs.existsSync(filePath)
+      ? "Use this existing database file?"
+      : "Create this database file?",
+    true,
+  );
+  if (!approved) cancel();
+
+  const setup = createLocalDatabase(process.cwd(), fileName, provider);
+  const shouldIgnore = await confirmPrompt(
+    "Add the database file to .gitignore?",
+    true,
+  );
+  if (shouldIgnore) {
+    addGitignoreEntry(
+      process.cwd(),
+      path.relative(process.cwd(), setup.filePath).split(path.sep).join("/"),
+    );
+  }
+
+  p.outro(
+    [
+      `${label} is ready.`,
+      "",
+      ...(setup.startCommand ? [`Run: ${setup.startCommand}`, ""] : []),
+      `Connection: ${setup.connectionUrl}`,
+    ].join("\n"),
+  );
+}
+
 export async function runCli(argv = process.argv): Promise<void> {
   const program = new Command();
 
@@ -277,7 +342,37 @@ export async function runCli(argv = process.argv): Promise<void> {
           },
         });
 
-        await setupDockerDatabases(projectName);
+        const setupType = await p.select<
+          { value: SetupType; label: string; hint?: string }[],
+          SetupType
+        >({
+          message: "What would you like to set up?",
+          options: [
+            {
+              value: "docker",
+              label: "Docker databases",
+              hint: "PostgreSQL, MySQL, Redis, or MongoDB",
+            },
+            {
+              value: "sqlite",
+              label: "SQLite file",
+              hint: "No Docker or server required",
+            },
+            {
+              value: "libsql",
+              label: "Local libSQL HTTP server",
+              hint: "Runs with the Turso CLI",
+            },
+          ],
+          initialValue: "docker",
+        });
+        if (p.isCancel(setupType)) cancel();
+
+        if (setupType === "docker") {
+          await setupDockerDatabases(projectName);
+        } else {
+          await setupLocalDatabase(setupType);
+        }
       } catch (error) {
         p.cancel(
           error instanceof ComposeConflictError || error instanceof Error
