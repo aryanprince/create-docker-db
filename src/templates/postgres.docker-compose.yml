@@ -1,27 +1,25 @@
-version: "3.9"
-
 name: ${selectedProjectName}-postgres
 
 services:
   # This is your local Postgres database instance
   postgres-db:
-    image: postgres
+    image: postgres:17
     restart: always
     environment:
-    POSTGRES_DB: ${selectedProjectName}
-    POSTGRES_USER: dev
-    POSTGRES_PASSWORD: dev
+      POSTGRES_DB: ${selectedProjectName}
+      POSTGRES_USER: dev
+      POSTGRES_PASSWORD: dev
     volumes:
       - ${selectedProjectName}-data:/var/lib/postgresql/data
     ports:
-      - "6969:5432" # Access the DB at port 6969
+      - "127.0.0.1:6969:5432" # Access the DB at port 6969
 
   # Use Adminer to quickly view the database at localhost:8069
   adminer:
     image: adminer
     restart: always
     ports:
-      - "8069:8080"
+      - "127.0.0.1:8069:8080"
 
 volumes:
   ${selectedProjectName}-data:
