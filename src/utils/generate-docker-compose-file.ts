@@ -1,29 +1,21 @@
-import fs from "fs";
-import path from "path";
+import mysqlTemplate from "../templates/mysql.docker-compose.yml";
+import postgresTemplate from "../templates/postgres.docker-compose.yml";
+import redisTemplate from "../templates/redis.docker-compose.yml";
+
+export type Database = "postgres" | "mysql" | "redis";
+
+const templates: Record<Database, string> = {
+  mysql: mysqlTemplate,
+  postgres: postgresTemplate,
+  redis: redisTemplate,
+};
 
 export function generateDockerCompose(
-  selectedDatabase: string,
+  selectedDatabase: Database,
   selectedProjectName: string,
 ): string {
-  const templatePath = path.join(
-    __dirname,
-    "..",
-    "templates",
-    `${selectedDatabase}.docker-compose.yml`,
-  );
-
-  if (!fs.existsSync(templatePath)) {
-    throw new Error(`Template for ${selectedDatabase} not found`);
-  }
-
-  // Read the template file
-  let templateContent = fs.readFileSync(templatePath, "utf-8");
-
-  // Replace placeholders (like ${selectedProjectName}) in the template
-  templateContent = templateContent.replace(
+  return templates[selectedDatabase].replace(
     /\$\{selectedProjectName\}/g,
-    selectedProjectName,
+    () => selectedProjectName,
   );
-
-  return templateContent;
 }
