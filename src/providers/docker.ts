@@ -291,7 +291,7 @@ export function generateDockerSetup(
       });
     }
 
-    if (config.persistence) volumes[volumeName] = null;
+    if (config.persistence) volumes[volumeName] = {};
 
     const adminUrl = addAdminer(services, config);
     if (adminUrl) adminUrls.push(adminUrl);

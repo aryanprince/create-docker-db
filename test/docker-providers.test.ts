@@ -1,4 +1,6 @@
 import assert from "node:assert/strict";
+import fs from "node:fs";
+import path from "node:path";
 import test from "node:test";
 
 import {
@@ -64,4 +66,20 @@ test("generates an authenticated MongoDB service without deprecated admin UI", (
     setup.connectionUrls[0]?.url,
     "mongodb://dev:dev@127.0.0.1:27017/demo?authSource=admin",
   );
+});
+
+test("matches the reviewed all-provider Compose snapshot", () => {
+  const setup = generateDockerSetup(
+    "example",
+    (["postgres", "mysql", "redis", "mongodb"] as const).map((id) =>
+      createDefaultDockerConfig(id, "example"),
+    ),
+  );
+  const content = mergeComposeDocument(undefined, setup.fragment).content;
+  const snapshot = fs.readFileSync(
+    path.join(process.cwd(), "test/fixtures/all-databases.compose.yaml"),
+    "utf8",
+  );
+
+  assert.equal(content, snapshot);
 });

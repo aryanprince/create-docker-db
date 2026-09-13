@@ -1,0 +1,114 @@
+services:
+  postgres-db:
+    image: postgres:17
+    restart: unless-stopped
+    ports:
+      - 127.0.0.1:5432:5432
+    shm_size: 128mb
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-example}
+      POSTGRES_USER: ${POSTGRES_USER:-dev}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-dev}
+    volumes:
+      - example-postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+  postgres-adminer:
+    image: adminer:6
+    restart: unless-stopped
+    depends_on:
+      postgres-db:
+        condition: service_healthy
+    environment:
+      ADMINER_DEFAULT_SERVER: postgres-db
+    ports:
+      - 127.0.0.1:8069:8080
+  mysql-db:
+    image: mysql:8.4
+    restart: unless-stopped
+    ports:
+      - 127.0.0.1:3306:3306
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-example}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root}
+      MYSQL_USER: ${MYSQL_USER:-dev}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-dev}
+    volumes:
+      - example-mysql-data:/var/lib/mysql
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - mysqladmin ping -h localhost -u root -p$$MYSQL_ROOT_PASSWORD --silent
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+  mysql-adminer:
+    image: adminer:6
+    restart: unless-stopped
+    depends_on:
+      mysql-db:
+        condition: service_healthy
+    environment:
+      ADMINER_DEFAULT_SERVER: mysql-db
+    ports:
+      - 127.0.0.1:8070:8080
+  redis-db:
+    image: redis:8
+    restart: unless-stopped
+    ports:
+      - 127.0.0.1:6379:6379
+    command:
+      - redis-server
+      - --appendonly
+      - yes
+    volumes:
+      - example-redis-data:/data
+    healthcheck:
+      test:
+        - CMD
+        - redis-cli
+        - ping
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+  redis-insight:
+    image: redis/redisinsight:3.8.0
+    restart: unless-stopped
+    depends_on:
+      redis-db:
+        condition: service_healthy
+    ports:
+      - 127.0.0.1:8071:5540
+  mongodb-db:
+    image: mongo:8.0
+    restart: unless-stopped
+    ports:
+      - 127.0.0.1:27017:27017
+    environment:
+      MONGO_INITDB_DATABASE: ${MONGO_INITDB_DATABASE:-example}
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME:-dev}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD:-dev}
+    volumes:
+      - example-mongodb-data:/data/db
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - "mongosh --quiet --host localhost --username \"$$MONGO_INITDB_ROOT_USERNAME\" --password \"$$MONGO_INITDB_ROOT_PASSWORD\" --authenticationDatabase admin --eval \"quit(db.adminCommand('ping').ok ? 0 : 2)\""
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+volumes:
+  example-postgres-data: {}
+  example-mysql-data: {}
+  example-redis-data: {}
+  example-mongodb-data: {}
+name: example-databases
