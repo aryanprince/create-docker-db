@@ -19,7 +19,7 @@
   "license": "MIT",
   "type": "commonjs",
   "bin": {
-    "create-docker-db": "./dist/index.js"
+    "create-docker-db": "dist/index.js"
   },
   "scripts": {
     "build": "tsup",
@@ -35,7 +35,6 @@
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.16.4",
-    "@release-it/conventional-changelog": "^8.0.2",
     "@types/node": "^22.5.5",
     "prettier": "^3.3.3",
     "release-it": "^17.6.0",
