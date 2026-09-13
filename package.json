@@ -46,7 +46,6 @@
   },
   "dependencies": {
     "@clack/prompts": "^0.7.0",
-    "@inquirer/prompts": "^6.0.1",
     "commander": "^12.1.0",
     "yaml": "^2.8.1"
   }
