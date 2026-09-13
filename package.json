@@ -18,6 +18,12 @@
   },
   "license": "MIT",
   "type": "commonjs",
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
   "bin": {
     "create-docker-db": "dist/index.js"
   },
