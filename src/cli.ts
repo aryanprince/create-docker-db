@@ -18,6 +18,12 @@ import {
   type LocalProviderId,
 } from "./providers/local";
 import {
+  createRemoteConnectionProfile,
+  mergeEnvExample,
+  writeEnvExampleAtomically,
+  type RemoteProviderId,
+} from "./providers/remote";
+import {
   ComposeConflictError,
   findComposeFile,
   mergeComposeDocument,
@@ -27,7 +33,7 @@ import {
 const projectNamePattern = /^[a-z0-9][a-z0-9_-]*$/;
 const serviceNamePattern = /^[a-zA-Z0-9][a-zA-Z0-9_.-]*$/;
 
-type SetupType = "docker" | LocalProviderId;
+type SetupType = "docker" | LocalProviderId | "remote";
 
 function normalizeProjectName(value: string): string {
   const normalized = value
@@ -310,6 +316,79 @@ async function setupLocalDatabase(provider: LocalProviderId): Promise<void> {
   );
 }
 
+async function setupRemoteConnection(): Promise<void> {
+  const provider = await p.select<
+    { value: RemoteProviderId; label: string }[],
+    RemoteProviderId
+  >({
+    message: "Which hosted database are you connecting?",
+    options: [
+      { value: "turso", label: "Turso" },
+      { value: "planetscale-mysql", label: "PlanetScale MySQL" },
+      { value: "planetscale-postgres", label: "PlanetScale PostgreSQL" },
+    ],
+    initialValue: "turso",
+  });
+  if (p.isCancel(provider)) cancel();
+
+  const databaseName = await textPrompt({
+    message: "Existing database name",
+    validate: (value) =>
+      !value?.trim() ? "Enter a database name." : undefined,
+  });
+  let branchName = "main";
+
+  if (provider === "planetscale-mysql") {
+    branchName = await textPrompt({
+      message: "PlanetScale branch name",
+      defaultValue: "main",
+      validate: (value) =>
+        !value?.trim() ? "Enter a branch name." : undefined,
+    });
+  }
+
+  const profile = createRemoteConnectionProfile(
+    provider,
+    databaseName,
+    branchName,
+  );
+  const envExamplePath = path.join(process.cwd(), ".env.example");
+  const source = fs.existsSync(envExamplePath)
+    ? fs.readFileSync(envExamplePath, "utf8")
+    : "";
+  const merged = mergeEnvExample(source, profile);
+
+  p.note(
+    [
+      "File: .env.example",
+      `Add: ${merged.added.join(", ") || "none"}`,
+      `Keep existing: ${merged.existing.join(", ") || "none"}`,
+      "Live credentials will not be saved.",
+    ].join("\n"),
+    `${profile.label} connection profile`,
+  );
+
+  const approved = await confirmPrompt(
+    merged.added.length > 0
+      ? "Update .env.example with these placeholders?"
+      : "Keep the existing placeholders?",
+    true,
+  );
+  if (!approved) cancel();
+
+  if (merged.added.length > 0) {
+    writeEnvExampleAtomically(process.cwd(), merged.content);
+  }
+
+  p.outro(
+    [
+      `${profile.label} connection profile is ready.`,
+      "",
+      ...profile.instructions,
+    ].join("\n"),
+  );
+}
+
 export async function runCli(argv = process.argv): Promise<void> {
   const program = new Command();
 
@@ -363,6 +442,11 @@ export async function runCli(argv = process.argv): Promise<void> {
               label: "Local libSQL HTTP server",
               hint: "Runs with the Turso CLI",
             },
+            {
+              value: "remote",
+              label: "Hosted database connection",
+              hint: "Turso or PlanetScale",
+            },
           ],
           initialValue: "docker",
         });
@@ -370,6 +454,8 @@ export async function runCli(argv = process.argv): Promise<void> {
 
         if (setupType === "docker") {
           await setupDockerDatabases(projectName);
+        } else if (setupType === "remote") {
+          await setupRemoteConnection();
         } else {
           await setupLocalDatabase(setupType);
         }
