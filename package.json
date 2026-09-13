@@ -32,7 +32,7 @@
     "changesets:generate": "changeset",
     "changesets:release": "changeset version && changeset publish",
     "ci": "pnpm run format:check && pnpm run lint && pnpm run build",
-    "release": "pnpm run ci && pnpm release-it --ci",
+    "release": "pnpm run ci && pnpm release-it",
     "prepublishOnly": "npm run ci"
   },
   "devDependencies": {
