@@ -2,9 +2,7 @@ import fs from "fs";
 import path from "path";
 
 export type RemoteProviderId =
-  | "turso"
-  | "planetscale-mysql"
-  | "planetscale-postgres";
+  "turso" | "planetscale-mysql" | "planetscale-postgres";
 
 export interface RemoteConnectionProfile {
   id: RemoteProviderId;
