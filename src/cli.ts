@@ -29,6 +29,7 @@ import {
   mergeComposeDocument,
   writeValidatedComposeFile,
 } from "./utils/compose-file";
+import { findAvailablePort, isPortAvailable } from "./utils/ports";
 
 const projectNamePattern = /^[a-z0-9][a-z0-9_-]*$/;
 const serviceNamePattern = /^[a-zA-Z0-9][a-zA-Z0-9_.-]*$/;
@@ -161,7 +162,9 @@ async function customizeDockerConfig(
   };
 }
 
-function assertUniqueConfiguration(configs: DockerProviderConfig[]): void {
+async function assertUsableConfiguration(
+  configs: DockerProviderConfig[],
+): Promise<void> {
   const names = new Set<string>();
   const ports = new Set<number>();
 
@@ -189,6 +192,12 @@ function assertUniqueConfiguration(configs: DockerProviderConfig[]): void {
       ports.add(port);
     }
   }
+
+  for (const port of ports) {
+    if (!(await isPortAvailable(port))) {
+      throw new Error(`Host port \`${port}\` is already in use.`);
+    }
+  }
 }
 
 async function setupDockerDatabases(projectName: string): Promise<void> {
@@ -207,12 +216,26 @@ async function setupDockerDatabases(projectName: string): Promise<void> {
   if (p.isCancel(selection)) cancel();
 
   const configs: DockerProviderConfig[] = [];
+  const reservedPorts = new Set<number>();
   for (const id of selection) {
-    configs.push(
-      await customizeDockerConfig(createDefaultDockerConfig(id, projectName)),
+    const defaultConfig = createDefaultDockerConfig(id, projectName);
+    defaultConfig.hostPort = await findAvailablePort(
+      defaultConfig.hostPort,
+      reservedPorts,
     );
+    reservedPorts.add(defaultConfig.hostPort);
+
+    if (defaultConfig.adminUi) {
+      defaultConfig.adminPort = await findAvailablePort(
+        defaultConfig.adminPort,
+        reservedPorts,
+      );
+      reservedPorts.add(defaultConfig.adminPort);
+    }
+
+    configs.push(await customizeDockerConfig(defaultConfig));
   }
-  assertUniqueConfiguration(configs);
+  await assertUsableConfiguration(configs);
 
   const setup = generateDockerSetup(projectName, configs);
   const existingPath = findComposeFile(process.cwd());
