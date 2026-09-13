@@ -4,6 +4,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
+import { setTimeout as delay } from "node:timers/promises";
 
 import {
   createDefaultDockerConfig,
@@ -17,6 +18,22 @@ import {
 import { findAvailablePort } from "../src/utils/ports";
 
 const runDockerTests = process.env.RUN_DOCKER_TESTS === "1";
+
+async function waitForHttp(url: string, timeout = 60_000): Promise<void> {
+  const deadline = Date.now() + timeout;
+
+  while (Date.now() < deadline) {
+    try {
+      const response = await fetch(url);
+      if (response.ok) return;
+    } catch {
+      // The container can be running before its HTTP server starts accepting requests.
+    }
+    await delay(500);
+  }
+
+  throw new Error(`${url} did not become ready within ${timeout}ms.`);
+}
 
 test(
   "starts every generated database and reaches healthy state",
@@ -38,8 +55,11 @@ test(
     for (const id of providerIds) {
       const config = createDefaultDockerConfig(id, "integration-test");
       config.hostPort = await findAvailablePort(45_000, reservedPorts);
-      config.adminUi = false;
       reservedPorts.add(config.hostPort);
+      if (config.adminUi) {
+        config.adminPort = await findAvailablePort(46_000, reservedPorts);
+        reservedPorts.add(config.adminPort);
+      }
       configs.push(config);
     }
 
@@ -70,13 +90,18 @@ test(
         `Docker databases did not become healthy:\n${up.stderr || up.stdout}`,
       );
 
+      await Promise.all(setup.adminUrls.map(({ url }) => waitForHttp(url)));
+
       const ps = spawnSync(
         "docker",
         ["compose", "-f", composePath, "ps", "--status", "running", "-q"],
         { encoding: "utf8" },
       );
       const runningContainers = ps.stdout.trim().split(/\r?\n/).filter(Boolean);
-      assert.equal(runningContainers.length, providerIds.length);
+      assert.equal(
+        runningContainers.length,
+        Object.keys(setup.fragment.services).length,
+      );
     } finally {
       spawnSync(
         "docker",
