@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
 import fs from "node:fs";
+import http from "node:http";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -19,16 +20,36 @@ import { findAvailablePort } from "../src/utils/ports";
 
 const runDockerTests = process.env.RUN_DOCKER_TESTS === "1";
 
+async function checkHttp(url: string): Promise<boolean> {
+  return new Promise((resolve) => {
+    let settled = false;
+    const finish = (result: boolean) => {
+      if (settled) return;
+      settled = true;
+      resolve(result);
+    };
+    const request = http.get(url, (response) => {
+      response.resume();
+      finish(
+        response.statusCode !== undefined &&
+          response.statusCode >= 200 &&
+          response.statusCode < 400,
+      );
+    });
+
+    request.setTimeout(2_000, () => {
+      request.destroy();
+      finish(false);
+    });
+    request.once("error", () => finish(false));
+  });
+}
+
 async function waitForHttp(url: string, timeout = 60_000): Promise<void> {
   const deadline = Date.now() + timeout;
 
   while (Date.now() < deadline) {
-    try {
-      const response = await fetch(url);
-      if (response.ok) return;
-    } catch {
-      // The container can be running before its HTTP server starts accepting requests.
-    }
+    if (await checkHttp(url)) return;
     await delay(500);
   }
 
